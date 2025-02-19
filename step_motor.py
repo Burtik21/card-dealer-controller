@@ -9,8 +9,8 @@ class StepMotor:
 
 
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(Pins.STEP, GPIO.OUT)
-        GPIO.setup(Pins.DIR, GPIO.OUT)
+        GPIO.setup(Pins.MOTOR_STEP_STEP, GPIO.OUT)
+        GPIO.setup(Pins.MOTOR_STEP_DIR, GPIO.OUT)
 
     def set_direction(self, direction):
         """ Nastavení směru: 1 = dopředu, 0 = zpět """
