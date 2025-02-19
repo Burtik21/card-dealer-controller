@@ -51,12 +51,13 @@ class DCMotor:
         DCMotor.initialized = False  # ✅ Přidáno pro správnou reinicializaci
 
     @staticmethod
-    def deal_card():
+    def deal_card(forward_time,backward_time,wait_between, ):
         """ Ovládání motoru pro rozdání karty """
         DCMotor.init()
         DCMotor.forward()
-        time.sleep(0.03)
+        time.sleep(forward_time)
         DCMotor.stop()
+        time.sleep(wait_between)
         DCMotor.backward()
-        time.sleep(0.01)
+        time.sleep(backward_time)
         DCMotor.stop()
