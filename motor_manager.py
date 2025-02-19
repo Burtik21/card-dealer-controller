@@ -1,3 +1,5 @@
+import time
+
 from step_motor import StepMotor
 from dc_motor import DCMotor
 
@@ -69,9 +71,32 @@ class MotorManager:
                 DCMotor.cleanup()
                 self.step_motor.cleanup()
 
+    def run3(self):
+        """ Hlavní smyčka programu """
+        while self.running:
+            try:
+                deal_direction = input("Zadej uhel vyhození karty (stupně): ")
+                steps = int(deal_direction)
+
+                self.step_motor.rotate(steps)
+                time.sleep(4)
+                DCMotor.deal_card(73/1000,45/1000,15/1000)
+
+            except ValueError:
+                print("⚠️ Zadali jste neplatnou hodnotu, zkuste to znovu.")
+
+            except KeyboardInterrupt:
+                print("\nUkončuji program...")
+                self.running = False
+                DCMotor.cleanup()
+                self.step_motor.cleanup()
+
+
 manager = MotorManager()# Vytvoří instanci
-selection = int(input("otaceni (1) vyhazovani karet (2)"))
+selection = int(input("otaceni (1) vyhazovani karet (2) otoceni a vyhozeni (3)"))
 if selection == 1:
     manager.run()  # Spustí hlavní smyčku
 elif selection == 2:
     manager.run2()
+elif selection == 3:
+    manager.run3()
