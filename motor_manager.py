@@ -25,6 +25,6 @@ class MotorManager:
                 DCMotor.cleanup()
                 self.step_motor.cleanup()
 
-# ✅ SPRÁVNÉ VOLÁNÍ
+
 manager = MotorManager()  # Vytvoří instanci
 manager.run()  # Spustí hlavní smyčku

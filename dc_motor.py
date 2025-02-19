@@ -10,9 +10,9 @@ class DCMotor:
         """ Inicializuje GPIO pouze jednou """
         if not DCMotor.initialized:
             GPIO.setmode(GPIO.BCM)
-            GPIO.setup(Pins.MOTOR_DC_IN1, GPIO.OUT)  # MOTOR_DC_IN1
-            GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)  # MOTOR_DC_IN2
-            GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)  # MOTOR_DC_PWM
+            GPIO.setup(Pins.MOTOR_DC_IN1, GPIO.OUT)
+            GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)
+            GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)
 
             DCMotor.pwm_control = GPIO.PWM(Pins.MOTOR_DC_PWM, 1000)  # Frekvence 1kHz
             DCMotor.pwm_control.start(0)
@@ -44,14 +44,15 @@ class DCMotor:
 
     @staticmethod
     def cleanup():
-        DCMotor.init()
-        """ Uvolní GPIO """
+        """ Uvolní GPIO – volat pouze při ukončení programu! """
         DCMotor.stop()
         DCMotor.pwm_control.stop()
         GPIO.cleanup()
+        DCMotor.initialized = False  # ✅ Přidáno pro správnou reinicializaci
 
     @staticmethod
     def deal_card():
+        """ Ovládání motoru pro rozdání karty """
         DCMotor.init()
         DCMotor.forward()
         time.sleep(0.03)
@@ -59,11 +60,3 @@ class DCMotor:
         DCMotor.backward()
         time.sleep(0.01)
         DCMotor.stop()
-
-
-
-
-
-
-
-
