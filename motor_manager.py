@@ -47,5 +47,9 @@ class MotorManager:
                 DCMotor.cleanup()
                 self.step_motor.cleanup()
 
-manager = MotorManager()  # Vytvoří instanci
-manager.run()  # Spustí hlavní smyčku
+manager = MotorManager()# Vytvoří instanci
+selection = int(input("otaceni (1) vyhazovani karet (2)"))
+if selection == 1:
+    manager.run()  # Spustí hlavní smyčku
+elif selection == 2:
+    manager.run2()
