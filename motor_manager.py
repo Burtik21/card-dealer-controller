@@ -34,7 +34,7 @@ class MotorManager:
         first = False
         while self.running:
             try:
-                global first
+
                 #deal_direction = input("Zadej uhel vyhození karty (stupně): ")
                 #steps = int(deal_direction)
 
