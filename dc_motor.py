@@ -32,7 +32,7 @@ class DCMotor:
         DCMotor.init()
         GPIO.output(Pins.MOTOR_DC_IN1, GPIO.HIGH)
         GPIO.output(Pins.MOTOR_DC_IN2, GPIO.LOW)
-        DCMotor.pwm_control.ChangeDutyCycle(85)
+        DCMotor.pwm_control.ChangeDutyCycle(78)
 
     @staticmethod
     def stop():
