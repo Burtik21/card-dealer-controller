@@ -22,16 +22,16 @@ class DCMotor:
     def forward():
         """ Motor jede dopředu s danou rychlostí """
         DCMotor.init()
-        GPIO.output(Pins.MOTOR_DC_IN1, GPIO.HIGH)
-        GPIO.output(Pins.MOTOR_DC_IN2, GPIO.LOW)
+        GPIO.output(Pins.MOTOR_DC_IN1, GPIO.LOW)
+        GPIO.output(Pins.MOTOR_DC_IN2, GPIO.HIGH)
         DCMotor.pwm_control.ChangeDutyCycle(100)
 
     @staticmethod
     def backward():
         """ Motor jede dozadu """
         DCMotor.init()
-        GPIO.output(Pins.MOTOR_DC_IN1, GPIO.LOW)
-        GPIO.output(Pins.MOTOR_DC_IN2, GPIO.HIGH)
+        GPIO.output(Pins.MOTOR_DC_IN1, GPIO.HIGH)
+        GPIO.output(Pins.MOTOR_DC_IN2, GPIO.LOW)
         DCMotor.pwm_control.ChangeDutyCycle(100)
 
     @staticmethod
