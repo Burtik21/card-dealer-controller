@@ -16,7 +16,7 @@ class MotorManager:
                 steps = int(deal_direction)
 
                 self.step_motor.rotate(steps)
-                DCMotor.deal_card()
+                DCMotor.deal_card(0.073,0.045,0.015)
 
             except ValueError:
                 print("⚠️ Zadali jste neplatnou hodnotu, zkuste to znovu.")
@@ -80,7 +80,7 @@ class MotorManager:
 
                 self.step_motor.rotate(steps)
                 time.sleep(4)
-                DCMotor.deal_card(73/1000,45/1000,15/1000)
+                DCMotor.deal_card(0.073,0.045,0.015)
 
             except ValueError:
                 print("⚠️ Zadali jste neplatnou hodnotu, zkuste to znovu.")
