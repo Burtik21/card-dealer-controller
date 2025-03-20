@@ -1,3 +1,4 @@
+from .utils.button import Button
 class Pins:
     """ Třída pro definici všech GPIO pinů """
     # Krokový motor
@@ -9,7 +10,15 @@ class Pins:
     MOTOR_DC_IN2 = 5
     MOTOR_DC_PWM = 13
 
-    # Další piny můžeš snadno přidat...
-    BUTTON = 23  # Například pro tlačítko
-    SENSOR = 24  # Například pro senzor
+    HALL_SENSOR = 24  # Například pro senzor
+
+    BUTTON_1 = Button(1,0,0)
+    BUTTON_2 = Button(2,0,0)
+    BUTTON_3 = Button(3,0,0)
+    BUTTON_4 = Button(4,0,0)
+    BUTTON_5 = Button(5,0,0)
+    BUTTON_6 = Button(6,0,0)
+
+
+
 
