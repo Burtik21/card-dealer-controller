@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from pins import Pins
+from .pins import Pins
 
 class DCMotor:
     initialized = False

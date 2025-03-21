@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 from app.drivers.pins import Pins
 from .step_motor import StepMotor
-from pins import Pins
+from .pins import Pins
 
 class Calibration:
     def __init__(self,calibration_state=False,calibration_steps=400):  # Nový pin pro nový senzor

@@ -1,8 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 import threading
-from pins import Pins
-from dc_motor import DCMotor
+from .pins import Pins
+from .dc_motor import DCMotor
 
 
 class StepMotor:

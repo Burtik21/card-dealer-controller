@@ -3,9 +3,9 @@ import threading
 import RPi.GPIO as GPIO
 import time
 from app.drivers.pins import Pins
-from step_motor import StepMotor
-from pins import Pins
-from dc_motor import DCMotor
+from .step_motor import StepMotor
+from .pins import Pins
+from .dc_motor import DCMotor
 
 class DealCard():
     def __init__(self):
