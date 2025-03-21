@@ -35,12 +35,12 @@ class Pins:
         GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)
         GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)
         GPIO.setup(Pins.HALL_SENSOR, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_1, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_2, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_3, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_4, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_5, GPIO.IN)
-        GPIO.setup(Pins.BUTTON_6, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_1.pin, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_2.pin, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_3.pin, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_4.pin, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_5.pin, GPIO.IN)
+        GPIO.setup(Pins.BUTTON_6.pin, GPIO.IN)
 
 
         print("GPIO piny byly úspěšně inicializovány!")
