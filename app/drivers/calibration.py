@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 from app.drivers.pins import Pins
-from step_motor import StepMotor
+from .step_motor import StepMotor
 from pins import Pins
 
 class Calibration:
