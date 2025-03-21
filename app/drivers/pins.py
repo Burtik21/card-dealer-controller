@@ -30,7 +30,7 @@ class Pins:
         GPIO.setup(Pins.MOTOR_STEP_DIR, GPIO.OUT)
         GPIO.output(Pins.MOTOR_STEP_DIR, GPIO.HIGH)
         GPIO.setup(Pins.MOTOR_STEP_ENABLE, GPIO.OUT)
-        GPIO.setup(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
+        GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
         GPIO.setup(Pins.MOTOR_DC_IN1, GPIO.OUT)
         GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)
         GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)

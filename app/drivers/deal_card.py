@@ -21,7 +21,7 @@ class DealCard():
             if (button is None) and (steps is None):
                 raise ValueError("Musíš zadat buď 'button' nebo 'steps'!")
 
-            final_steps = button.steps if button is not None else steps
+            final_steps = steps if steps is not None else button.steps
 
             self.step_motor.rotate(self.find_shortest_path(final_steps))
 
