@@ -19,15 +19,12 @@ class StepMotor:
 
         if not hasattr(self, 'initialized'):
             self.lock = threading.Lock()
-            self.stop_request = False
-            self.actual_steps = None
+            self._stop_request = False
             self._actual_steps = actual_steps
-            self.steps_per_rev = steps_per_rev
-            self._motor_direction = None
-            self.motor_direction = motor_direction
-            self.max_steps = max_steps
-            self.motor_enabled = False
-            self._motor_enabled = motor_enabled
+            self._steps_per_rev = steps_per_rev
+            self._motor_direction = motor_direction
+            self._max_steps = max_steps
+            self._motor_enabled = False
             self.initialized = True
 
     @property
@@ -54,6 +51,7 @@ class StepMotor:
             self._actual_steps = steps - 200
         else:
             self._actual_steps += steps
+
     def rotate(self, steps,delay=0.001):
         """
         nastavovani aktualni pozice se deje tu
@@ -74,9 +72,9 @@ class StepMotor:
 
     def stop_motor(self):
         print("stop prijat")
-        self.stop_request = True
-        time.sleep(5)
-        self.stop_request = False
+        self._stop_request = True
+        time.sleep(2)
+        self._stop_request = False
 
 
     def cleanup(self):
