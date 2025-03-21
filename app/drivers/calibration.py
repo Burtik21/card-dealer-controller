@@ -24,6 +24,7 @@ class Calibration:
                     self.calibration_state = True
                     self.step_motor.stop_motor()
                     self.step_motor.actual_steps = 0
+                    GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return
 
 
