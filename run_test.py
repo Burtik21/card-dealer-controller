@@ -19,7 +19,7 @@ def run():
         2: lambda: rotate_motor(step_motor),
         3: step_motor.stop_motor,
         4: dc_motor.deal_card,
-        5: deal_card.deal(steps=300),
+        5: lambda: deal_card.deal(steps=300),
         6: display_help,
         7: exit_app
     }

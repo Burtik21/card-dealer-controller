@@ -47,7 +47,7 @@ class DCMotor:
         DCMotor.initialized = False  # ✅ Přidáno pro správnou reinicializaci
 
     @staticmethod
-    def deal_card(forward_time,backward_time,wait_between, ):
+    def deal_card(forward_time=0.055,backward_time=0.03,wait_between=0.015 ):
         """ Ovládání motoru pro rozdání karty """
         DCMotor.init()
         DCMotor.forward()
