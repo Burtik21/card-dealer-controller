@@ -54,6 +54,9 @@ class StepMotor:
         else:
             self._actual_steps += steps
     def rotate(self, steps,delay=0.001):
+        """
+        nastavovani aktualni pozice se deje tu
+        """
 
         with self.lock:
             self.stop_request = False

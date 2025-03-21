@@ -21,12 +21,14 @@ class DealCard():
             if (button is None) and (steps is None):
                 raise ValueError("Musíš zadat buď 'button' nebo 'steps'!")
 
-            if button is not None:
-                button.
-                self.step_motor.rotate()
+            final_steps = button.steps if button is not None else steps
+
+            self.step_motor.rotate(self.find_shortest_path(final_steps))
 
     def find_shortest_path(self,absolute_deal_steps):
         """
+        nastavi spravny smer otaceni
+
         absolute_steps = kroky od nuloveho bodu (buttonu nebo proste misto kam chceme vyhodit kartu)
         steps = kolik kroku ma udelat
         """
@@ -35,6 +37,8 @@ class DealCard():
 
         if anti_cw < cw:
             self.step_motor.motor_direction = 1
+            return anti_cw
         else:
             self.step_motor.motor_direction = 0
+            return cw
 
