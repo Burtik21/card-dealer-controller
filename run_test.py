@@ -1,14 +1,17 @@
+from app.drivers import deal_card
 from app.drivers.calibration import Calibration
 from app.drivers.pins import Pins
 from app.drivers.step_motor import StepMotor
 from app.drivers.dc_motor import DCMotor
-
+from app.drivers.deal_card import DealCard
 def run():
     # Inicializace všech komponent
     Pins.setup_pins()
     calibration = Calibration()
     step_motor = StepMotor()
     dc_motor = DCMotor()
+    deal_card = DealCard()
+
 
     # Mapa (slovník) pro propojení akce s metodou
     actions = {
@@ -16,8 +19,9 @@ def run():
         2: lambda: rotate_motor(step_motor),
         3: step_motor.stop_motor,
         4: dc_motor.deal_card,
-        5: display_help,
-        6: exit_app
+        5: deal_card.deal(300),
+        6: display_help,
+        7: exit_app
     }
 
     # Menu pro uživatele
@@ -27,8 +31,9 @@ def run():
     2. Otáčet motor
     3. Zastavit motor
     4. Vyhodit kartu
-    5. Zobrazit nápovědu
-    6. Ukončit
+    5. deal karty
+    6. Zobrazit nápovědu
+    7. Ukončit
     """
 
     while True:
@@ -61,8 +66,9 @@ def display_help():
     2. Otáčet motor
     3. Zastavit motor
     4. Vyhodit kartu
-    5. Zobrazit nápovědu
-    6. Ukončit
+    5. deal karty
+    6. Zobrazit nápovědu
+    7. Ukončit
     """)
 
 def exit_app():
