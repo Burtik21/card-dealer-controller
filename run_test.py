@@ -1,4 +1,4 @@
-from app.drivers import deal_card
+
 from app.drivers.calibration import Calibration
 from app.drivers.pins import Pins
 from app.drivers.step_motor import StepMotor
