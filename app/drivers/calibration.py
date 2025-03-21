@@ -6,8 +6,7 @@ from pins import Pins
 
 class Calibration:
     def __init__(self,calibration_state=False,calibration_steps=400):  # Nový pin pro nový senzor
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(Pins.HALL_SENSOR, GPIO.IN)
+
         self.calibration_state = calibration_state
         self.calibration_steps = calibration_steps
         self.step_motor = StepMotor()

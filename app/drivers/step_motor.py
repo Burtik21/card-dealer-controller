@@ -26,12 +26,13 @@ class StepMotor:
             self._motor_direction = None
             self.motor_direction = motor_direction
             self.max_steps = max_steps
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(Pins.MOTOR_STEP_STEP, GPIO.OUT)
-            GPIO.setup(Pins.MOTOR_STEP_DIR, GPIO.OUT)
-            GPIO.output(Pins.MOTOR_STEP_DIR, GPIO.HIGH)  # Směr dopředu
-
+            self.motor_enabled = False
+            self._motor_enabled = motor_enabled
             self.initialized = True
+
+    @property
+    def motor_enabled(self):
+        return
 
     @property
     def motor_direction(self):
@@ -76,6 +77,7 @@ class StepMotor:
         self.stop_request = True
         time.sleep(5)
         self.stop_request = False
+
 
     def cleanup(self):
         """ Vyčistí GPIO (ukončení programu) """

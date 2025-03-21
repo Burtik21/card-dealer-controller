@@ -9,10 +9,6 @@ class DCMotor:
     def init():
         """ Inicializuje GPIO pouze jednou """
         if not DCMotor.initialized:
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(Pins.MOTOR_DC_IN1, GPIO.OUT)
-            GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)
-            GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)
 
             DCMotor.pwm_control = GPIO.PWM(Pins.MOTOR_DC_PWM, 1000)  # Frekvence 1kHz
             DCMotor.pwm_control.start(0)
