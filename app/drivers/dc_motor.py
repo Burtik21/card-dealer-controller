@@ -20,7 +20,7 @@ class DCMotor:
         DCMotor.init()
         GPIO.output(Pins.MOTOR_DC_IN1, GPIO.LOW)
         GPIO.output(Pins.MOTOR_DC_IN2, GPIO.HIGH)
-        DCMotor.pwm_control.ChangeDutyCycle(100)
+        DCMotor.pwm_control.ChangeDutyCycle(70)
 
     @staticmethod
     def backward():
