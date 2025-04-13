@@ -1,31 +1,35 @@
 import RPi.GPIO as GPIO
 import time
+from app.drivers.pins import Pins
 
 # Nastavení GPIO režimu
 GPIO.setmode(GPIO.BCM)
 
-# Definice pinů tlačítek
-BUTTON1_PIN = 21
-BUTTON2_PIN = 20
+# Seznam všech Button objektů
+BUTTONS = [
+    Pins.BUTTON_1,
+    Pins.BUTTON_2,
+    Pins.BUTTON_3,
+    Pins.BUTTON_4,
+    Pins.BUTTON_5,
+    Pins.BUTTON_6,
+]
 
-# Nastavení pinů jako vstupy s interním pull-up rezistorem
-GPIO.setup(BUTTON1_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(BUTTON2_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# Nastavení pinů jako vstup s pull-up rezistorem
+for button in BUTTONS:
+    if button.pin is not None:
+        GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 print("Stiskni tlačítko... (CTRL+C pro ukončení)")
 
 try:
     while True:
-        if GPIO.input(BUTTON1_PIN) == GPIO.LOW:
-            print("Tlačítko 1 zmáčknuto!")
-            time.sleep(0.2)  # Debouncing delay
-
-        if GPIO.input(BUTTON2_PIN) == GPIO.LOW:
-            print("Tlačítko 2 zmáčknuto!")
-            time.sleep(0.2)  # Debouncing delay
-
+        for button in BUTTONS:
+            if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
+                print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                time.sleep(0.2)  # Debounce
 except KeyboardInterrupt:
     print("Ukončuji program...")
 
 finally:
-    GPIO.cleanup()  # Resetuje GPIO
+    GPIO.cleanup()
