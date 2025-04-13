@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-from pins import Pins
+from app.drivers.pins import Pins
 
 # Nastavení GPIO režimu
 GPIO.setmode(GPIO.BCM)
