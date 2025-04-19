@@ -2,13 +2,11 @@ import threading
 import RPi.GPIO as GPIO
 import time
 import requests
+from app import create_app
 from app.drivers.pins import Pins
-from app import create_app, Calibration
 
-
-
-
-
+# ⏩ Nastav GPIO režim hned na začátku (ne až v create_app)
+Pins.setup_pins()
 
 def notify_node(button_index):
     try:
@@ -20,7 +18,6 @@ def notify_node(button_index):
     except Exception as e:
         print(f"❌ Chyba při odesílání do Node.js: {e}")
 
-# Naslouchání tlačítkům ve vlákně
 def listen_to_buttons():
     try:
         BUTTONS = [
@@ -38,7 +35,6 @@ def listen_to_buttons():
 
         print("▶️ Poslouchám tlačítka...")
 
-        # Uložíme si stav posledního přečtení
         last_states = {btn.index: GPIO.HIGH for btn in BUTTONS}
 
         while True:
@@ -51,21 +47,22 @@ def listen_to_buttons():
                         print(f"🔘 Tlačítko {button.index} zmáčknuto!")
                         notify_node(button.index)
 
-                    # Uložíme nový stav
                     last_states[button.index] = current_state
 
-            time.sleep(0.01)  # rychlej polling
+            time.sleep(0.01)
     except KeyboardInterrupt:
         print("⛔ Ukončuji poslech tlačítek.")
     finally:
         GPIO.cleanup()
 
-
-# Spuštění
+# 🧠 Teď spustíme hlavní část
 if __name__ == "__main__":
-    # Spustit naslouchání tlačítek ve vlákně
+    # Spusť GPIO poslech dřív, než se vytvoří app
     threading.Thread(target=listen_to_buttons, daemon=True).start()
+
+    # Teprve teď vytvoř Flask app (která taky může používat GPIO)
     app = create_app()
-    # Spustit Flask app
+
+    # Flask API start
     print("🚀 Flask API běží...")
     app.run(host="0.0.0.0", port=5001, debug=True)
