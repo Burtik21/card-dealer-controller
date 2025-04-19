@@ -8,6 +8,7 @@ def create_app():
 
     Pins.setup_pins()
     calibration = Calibration()
+    calibration.calibration_rotate()
     deal_card = DealCard()
 
     @app.route("/python/deal", methods=["POST"])
