@@ -43,7 +43,7 @@ def listen_to_buttons():
                     last_state = last_states[button.index]
 
                     if last_state == GPIO.HIGH and current_state == GPIO.LOW:
-                        print(f"🔘 Tlačítko {button.steps} zmáčknuto!")
+                        print(f"🔘 Tlačítko {button.index} zmáčknuto!")
                         notify_node(button.index)
 
                     last_states[button.index] = current_state
