@@ -56,4 +56,4 @@ if __name__ == "__main__":
     app = create_app()
     # Spustit Flask app
     print("🚀 Flask API běží...")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)
