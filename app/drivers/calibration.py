@@ -5,7 +5,7 @@ from .step_motor import StepMotor
 from .pins import Pins
 
 class Calibration:
-    def __init__(self,calibration_state=False,calibration_steps=400):  # Nový pin pro nový senzor
+    def __init__(self,calibration_state=False,calibration_steps=600):  # Nový pin pro nový senzor
 
         self.calibration_state = calibration_state
         self.calibration_steps = calibration_steps
@@ -19,9 +19,10 @@ class Calibration:
             timeout = 10
             self.step_motor.rotate(self.calibration_steps)
             while time.time() - start_time < timeout:
-                print("hledame nulovy bod")
+
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     self.calibration_state = True
+                    print("nasli jsme nulovy bod")
                     self.step_motor.stop_motor()
                     self.step_motor.actual_steps = 0
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
