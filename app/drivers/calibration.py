@@ -5,7 +5,7 @@ from .step_motor import StepMotor
 from .pins import Pins
 
 class Calibration:
-    def __init__(self,calibration_state=False,calibration_steps=550):  # Nový pin pro nový senzor
+    def __init__(self,calibration_state=False,calibration_steps=535):  # Nový pin pro nový senzor
 
         self.calibration_state = calibration_state
         self.calibration_steps = calibration_steps
