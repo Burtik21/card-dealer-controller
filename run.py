@@ -8,23 +8,8 @@ from app import create_app, Calibration
 
 
 
-# Seznam tlačítek
-BUTTONS = [
-    Pins.BUTTON_1,
-    Pins.BUTTON_2,
-    Pins.BUTTON_3,
-    Pins.BUTTON_4,
-    Pins.BUTTON_5,
-    Pins.BUTTON_6,
-]
 
-# Nastavení GPIO
-GPIO.setmode(GPIO.BCM)
-for button in BUTTONS:
-    if button.pin is not None:
-        GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# Funkce pro odeslání požadavku na Node.js backend
 def notify_node(button_index):
     try:
         response = requests.post(
@@ -38,16 +23,43 @@ def notify_node(button_index):
 # Naslouchání tlačítkům ve vlákně
 def listen_to_buttons():
     try:
+        BUTTONS = [
+            Pins.BUTTON_1,
+            Pins.BUTTON_2,
+            Pins.BUTTON_3,
+            Pins.BUTTON_4,
+            Pins.BUTTON_5,
+            Pins.BUTTON_6,
+        ]
+
+        for button in BUTTONS:
+            if button.pin is not None:
+                GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+        print("▶️ Poslouchám tlačítka...")
+
+        # Uložíme si stav posledního přečtení
+        last_states = {btn.index: GPIO.HIGH for btn in BUTTONS}
+
         while True:
             for button in BUTTONS:
-                if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
-                    print(f"🔘 Tlačítko {button.index} zmáčknuto!")
-                    notify_node(button.index)
-                    time.sleep(0.2)  # debounce
+                if button.pin is not None:
+                    current_state = GPIO.input(button.pin)
+                    last_state = last_states[button.index]
+
+                    if last_state == GPIO.HIGH and current_state == GPIO.LOW:
+                        print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                        notify_node(button.index)
+
+                    # Uložíme nový stav
+                    last_states[button.index] = current_state
+
+            time.sleep(0.01)  # rychlej polling
     except KeyboardInterrupt:
         print("⛔ Ukončuji poslech tlačítek.")
     finally:
         GPIO.cleanup()
+
 
 # Spuštění
 if __name__ == "__main__":
