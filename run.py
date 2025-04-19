@@ -3,11 +3,13 @@ import RPi.GPIO as GPIO
 import time
 import requests
 from app.drivers.pins import Pins
-from app import create_app
+from app import create_app, Calibration
 
 # Vytvoření Flask aplikace
 app = create_app()
-
+Pins.setup_pins()
+calibration = Calibration()
+calibration.calibration_rotate()
 
 # Funkce pro odeslání požadavku na Node.js backend
 def notify_node(button_index):
