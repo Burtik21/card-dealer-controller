@@ -14,19 +14,17 @@ class Calibration:
     def calibration_rotate(self):
         if self.calibration_state:
             return 1
-        else:
-            start_time = time.time()  # Uložíme čas startu pro timeout
-            timeout = 10
-            self.step_motor.rotate(self.calibration_steps)
-            while time.time() - start_time < timeout:
 
-                if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
-                    self.calibration_state = True
-                    print("nasli jsme nulovy bod")
-                    self.step_motor.stop_motor()
-                    self.step_motor.actual_steps = 0
-                    GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
-                    return
+        print("▶️ Spouštím kalibraci – otáčím krok po kroku...")
+        nalezeno = self.step_motor.rotate_until_sensor(max_steps=self.calibration_steps)
+
+        if nalezeno:
+            self.calibration_state = True
+            self.step_motor.stop_motor()
+            print("✅ Kalibrace hotová, motor zastaven.")
+        else:
+            print("❌ Kalibrace selhala – Hall senzor nenalezen.")
+
 
 
 

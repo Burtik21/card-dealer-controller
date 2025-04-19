@@ -5,16 +5,15 @@ import requests
 from app import create_app
 from app.drivers.pins import Pins
 
-# ⏩ Nastav GPIO režim hned na začátku (ne až v create_app)
 Pins.setup_pins()
 
-def notify_node(button_index):
+def notify_node(button_steps):
     try:
         response = requests.post(
             "http://localhost:3000/button-pressed",
-            json={"button": button_index}
+            json={"button_steps": button_steps}
         )
-        print(f"📤 Odesláno do Node.js: tlačítko {button_index} | Stav: {response.status_code}")
+        print(f"📤 Odesláno do Node.js: tlačítko {button_steps} | Stav: {response.status_code}")
     except Exception as e:
         print(f"❌ Chyba při odesílání do Node.js: {e}")
 
@@ -44,7 +43,7 @@ def listen_to_buttons():
                     last_state = last_states[button.index]
 
                     if last_state == GPIO.HIGH and current_state == GPIO.LOW:
-                        print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                        print(f"🔘 Tlačítko {button.steps} zmáčknuto!")
                         notify_node(button.index)
 
                     last_states[button.index] = current_state
