@@ -20,7 +20,7 @@ class Pins:
     BUTTON_3 = Button(3, 70, 8)
     BUTTON_4 = Button(4, 480, 25)
     BUTTON_5 = Button(5, 401, 24)
-    BUTTON_6 = Button(6, 300, 23)
+    BUTTON_6 = Button(6, 375, 23)
 
     @staticmethod
     def setup_pins():
