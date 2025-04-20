@@ -21,7 +21,13 @@ for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# Poslech tlačítek
+# Spuštění Flask serveru v druhém vlákně
+def run_flask():
+    print("🚀 Spouštím Flask...")
+    app = create_app()
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
+
+# Poslech tlačítek – zůstává beze změny
 def listen_to_buttons():
     try:
         print("▶️ Testovací mód spuštěn – zmáčkni tlačítko...")
@@ -37,10 +43,9 @@ def listen_to_buttons():
 
 # Hlavní část
 if __name__ == "__main__":
-    # Spuštění tlačítek ve vlákně
-    threading.Thread(target=listen_to_buttons, daemon=True).start()
+    # Spusť Flask jako druhé vlákno
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
 
-    # Spuštění Flask serveru
-    print("🚀 Flask API běží...")
-    app = create_app()
-    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
+    # Spusť TLAČÍTKA v hlavním vlákně (nech to tak jak máš!)
+    listen_to_buttons()
