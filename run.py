@@ -22,7 +22,7 @@ def listen_to_buttons():
         BUTTONS = [
             Pins.BUTTON_1,
             Pins.BUTTON_2,
-            Pins.BUTTON_3,
+            #Pins.BUTTON_3,
             Pins.BUTTON_4,
             Pins.BUTTON_5,
             Pins.BUTTON_6,
