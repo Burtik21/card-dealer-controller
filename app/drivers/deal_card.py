@@ -33,8 +33,8 @@ class DealCard():
         absolute_steps = kroky od nuloveho bodu (buttonu nebo proste misto kam chceme vyhodit kartu)
         steps = kolik kroku ma udelat
         """
-        cw=(self.step_motor.actual_steps-absolute_deal_steps)%200
-        anti_cw=(absolute_deal_steps-self.step_motor.actual_steps)%200
+        cw=(self.step_motor.actual_steps-absolute_deal_steps)%535
+        anti_cw=(absolute_deal_steps-self.step_motor.actual_steps)%535
 
         if anti_cw < cw:
             self.step_motor.motor_direction = 1

@@ -47,8 +47,8 @@ class StepMotor:
         return self._actual_steps
     @actual_steps.setter
     def actual_steps(self, steps):
-        if (self._actual_steps + steps) > 200:
-            self._actual_steps = steps - 200
+        if (self._actual_steps + steps) > 535:
+            self._actual_steps = steps - 535
         else:
             self._actual_steps += steps
 
