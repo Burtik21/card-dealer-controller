@@ -3,10 +3,12 @@ from app.drivers.calibration import Calibration
 from app.drivers.deal_card import DealCard
 from app.drivers.pins import Pins
 
+
+
 def create_app():
     app = Flask(__name__)
 
-
+    calibration = Calibration()
     deal_card = DealCard()
 
     @app.route("/python/deal", methods=["POST"])
