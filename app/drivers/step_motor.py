@@ -52,25 +52,25 @@ class StepMotor:
 
     import math
 
+    import math  # pokud nemáš nahoře, přidej
+
     def rotate(self, steps, delay=0.001):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            ramp_steps = min(50, steps)  # Kolik kroků má být zrychlení
-            start_delay = 0.01  # Velmi pomalý začátek
-            end_delay = delay
-            k = 5  # Tvar exponenciály
+            ramp_steps = min(100, steps)  # ← kolik kroků bude "zrychlování"
+            start_delay = 0.01  # ← první krok bude s tímto delayem
+            end_delay = delay  # ← cílová rychlost
+            delay_step = (start_delay - end_delay) / ramp_steps  # krokový rozdíl
 
             for i in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # Smooth exponenciální delay
                 if i < ramp_steps:
-                    t = i / ramp_steps
-                    current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
+                    current_delay = start_delay - delay_step * i
                 else:
                     current_delay = end_delay
 
@@ -93,21 +93,20 @@ class StepMotor:
                     print("✅ Hall senzor detekován.")
                     self._actual_steps = 0
                     self.motor_direction = 0
-                    time.sleep(0.5)
+                    time.sleep(0.3)
 
-                    total_steps = 10
+                    # Po nalezení se plynule otoč o 30 zpět
+                    total_steps = 15
                     start_delay = 0.01
                     end_delay = delay
-                    k = 5
+                    delay_step = (start_delay - end_delay) / total_steps
 
                     for i in range(total_steps):
-                        t = i / total_steps
-                        current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
-
+                        d = start_delay - delay_step * i
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                        time.sleep(current_delay)
+                        time.sleep(d)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                        time.sleep(current_delay)
+                        time.sleep(d)
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True
