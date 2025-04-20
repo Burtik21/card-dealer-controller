@@ -30,7 +30,7 @@ class DealCard():
 
             # ✅ Opravena aktualizace pozice
             self.step_motor.actual_steps = final_steps
-
+            self.dc_motor.deal_card()
             print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
 
     def find_shortest_path(self, absolute_deal_steps):
