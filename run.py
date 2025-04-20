@@ -16,40 +16,40 @@ BUTTONS = [
     Pins.BUTTON_6,
 ]
 
-# Nastavení GPIO
+# GPIO setup
 GPIO.setmode(GPIO.BCM)
-Pins.setup_pins()  # ale už NEBUDE obsahovat volání kalibrace
+Pins.setup_pins()
 
 for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# ⬇️ Provést kalibraci PŘED Flaskem
+# Kalibrace před spuštěním
 print("🧭 Spouštím kalibraci...")
 calibration = Calibration()
 calibration.calibration_rotate()
 print("✅ Kalibrace dokončena")
 
-# Funkce pro Flask server
-def start_flask():
-    print("🚀 Flask API startuje...")
-    app = create_app()
-    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
+# 👉 Poslech tlačítek ve vlákně
+def listen_to_buttons():
+    try:
+        print("▶️ Poslouchám tlačítka...")
+        while True:
+            for button in BUTTONS:
+                if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
+                    print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                    time.sleep(0.3)
+    except KeyboardInterrupt:
+        print("⛔ Ukončuji poslech tlačítek.")
+    finally:
+        GPIO.cleanup()
 
-# Spuštění Flask serveru ve vlákně
-flask_thread = threading.Thread(target=start_flask)
-flask_thread.daemon = True
-flask_thread.start()
+# Spustit poslech ve vlákně
+button_thread = threading.Thread(target=listen_to_buttons)
+button_thread.daemon = True
+button_thread.start()
 
-# Tvoje funkční tlačítka – beze změny
-print("▶️ TEST režim: tlačítka + Flask paralelně")
-try:
-    while True:
-        for button in BUTTONS:
-            if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
-                print(f"🔘 Tlačítko {button.index} zmáčknuto!")
-                time.sleep(0.3)
-except KeyboardInterrupt:
-    print("⛔ Ukončuji program")
-finally:
-    GPIO.cleanup()
+# Spuštění Flask aplikace (v hlavním vlákně!)
+print("🚀 Flask API startuje...")
+app = create_app()
+app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
