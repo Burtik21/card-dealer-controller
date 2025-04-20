@@ -10,7 +10,7 @@ Pins.setup_pins()
 def notify_node(button_steps):
     try:
         response = requests.post(
-            "http://localhost:3000/button-pressed",
+            "http://localhost:5000/api/deal",
             json={"button_steps": button_steps}
         )
         print(f"📤 Odesláno do Node.js: tlačítko {button_steps} | Stav: {response.status_code}")
