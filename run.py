@@ -35,7 +35,7 @@ print("✅ Kalibrace dokončena")
 def notify_node(button_index):
     try:
         response = requests.post(
-            "http://localhost:3000/api/deal",  # změň na IP/port podle backendu
+            "http://127.0.0.1:5000/api/deal",  # změň na IP/port podle backendu
             json={"button": button_index}
         )
         print(f"📤 Odesláno do Node.js: tlačítko {button_index} | Status: {response.status_code}")
