@@ -56,24 +56,29 @@ class StepMotor:
         with self.lock:
             self._stop_request = False
 
-
-            # ✅ Zapni motor
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            for _ in range(steps):
-                if not self._stop_request:
-                    GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                    time.sleep(delay)
-                    GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                    time.sleep(delay)
-                else:
+            ramp_steps = min(20, steps)  # prvních 20 kroků zpomalíme
+            start_delay = 0.005  # pomalý start (větší delay)
+            end_delay = delay  # cílová rychlost
+
+            for i in range(steps):
+                if self._stop_request:
                     print("motor zastaven")
                     break
 
-            time.sleep(0.5)
-            self.actual_steps = steps
+                # Výpočet delay (lineární ramp-up)
+                if i < ramp_steps:
+                    current_delay = start_delay - ((start_delay - end_delay) * (i / ramp_steps))
+                else:
+                    current_delay = end_delay
 
-            # ✅ Vypni motor
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                time.sleep(current_delay)
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                time.sleep(current_delay)
+
+            time.sleep(0.5)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
     def rotate_until_sensor(self, max_steps=1000, delay=0.001):
@@ -81,23 +86,34 @@ class StepMotor:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
             self.motor_direction = 1
+
             for step in range(max_steps):
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
-                    self._actual_steps = 0  # nastavíme výchozí pozici
+                    self._actual_steps = 0
                     self.motor_direction = 0
                     time.sleep(0.5)
-                    for _ in range(55):
+
+                    # Ramp-up při dojezdu o 55 kroků
+                    ramp_steps = 20
+                    start_delay = 0.005
+                    end_delay = delay
+
+                    for i in range(55):
+                        if i < ramp_steps:
+                            current_delay = start_delay - ((start_delay - end_delay) * (i / ramp_steps))
+                        else:
+                            current_delay = end_delay
 
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                        time.sleep(delay)
+                        time.sleep(current_delay)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                        time.sleep(delay)
+                        time.sleep(current_delay)
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True
 
-                # Normální krok
+                # Normální krok během hledání senzoru
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                 time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)

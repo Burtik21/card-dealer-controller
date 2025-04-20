@@ -25,9 +25,13 @@ class DealCard():
             steps_to_move = self.find_shortest_path(final_steps)
 
             print(f"🔁 Aktuální pozice: {self.step_motor.actual_steps}")
-            print(f"🎯 Cíl: {final_steps} → Otáčím o {steps_to_move} kroků, směr: {'➡️' if self.step_motor.motor_direction else '⬅️'}")
+            print(
+                f"🎯 Cíl: {final_steps} → Otáčím o {steps_to_move} kroků, směr: {'➡️' if self.step_motor.motor_direction else '⬅️'}")
 
             self.step_motor.rotate(steps_to_move)
+
+            # ✅ Nastavíme skutečnou cílovou pozici
+            self.step_motor.actual_steps = final_steps
 
             print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
 
