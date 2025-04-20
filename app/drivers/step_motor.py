@@ -55,24 +55,30 @@ class StepMotor:
 
     import math
 
+    import math
+
     def rotate(self, steps, delay=0.001):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            ramp_steps = min(50, steps)  # Kolik kroků má být zrychlení
-            start_delay = 0.01  # Velmi pomalý začátek
+            ramp_steps = min(50, steps // 2)  # Zrychlování i zpomalování
+            start_delay = 0.01
             end_delay = delay
-            k = 5  # Tvar exponenciály
+            k = 5  # exponent pro tvar křivky
 
             for i in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # Smooth exponenciální delay
+                # Ramp-up
                 if i < ramp_steps:
                     t = i / ramp_steps
+                    current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
+                # Ramp-down
+                elif i >= steps - ramp_steps:
+                    t = (steps - i) / ramp_steps
                     current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
                 else:
                     current_delay = end_delay
@@ -82,7 +88,7 @@ class StepMotor:
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
                 time.sleep(current_delay)
 
-            time.sleep(0.3)
+            time.sleep(0.2)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
     import math
