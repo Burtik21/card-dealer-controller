@@ -6,6 +6,14 @@ from .step_motor import StepMotor
 from .pins import Pins
 from .dc_motor import DCMotor
 
+import threading
+import RPi.GPIO as GPIO
+import time
+from app.drivers.pins import Pins
+from .step_motor import StepMotor
+from .pins import Pins
+from .dc_motor import DCMotor
+
 class DealCard():
     def __init__(self):
         self.lock = threading.Lock()
@@ -30,7 +38,7 @@ class DealCard():
 
             # ✅ Opravena aktualizace pozice
             self.step_motor.actual_steps = final_steps
-            self.dc_motor.deal_card()
+
             print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
 
     def find_shortest_path(self, absolute_deal_steps):
@@ -43,3 +51,4 @@ class DealCard():
         else:
             self.step_motor.motor_direction = 0
             return cw
+
