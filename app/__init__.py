@@ -11,14 +11,13 @@ def create_app(motor_queue):
     def api_deal():
         data = request.get_json()
         steps = data.get("steps")
-        print(f"📤 API požadavek: vyhodit kartu ({steps} kroků)")
-        motor_queue.put(("deal", steps))  # 💥 místo přímého volání
+        motor_queue.put(("deal", steps))
         return jsonify({"status": "ok"})
 
     @app.route("/python/calibrate", methods=["POST"])
     def api_calibrate():
-        print("📤 API požadavek: kalibrace")
-        motor_queue.put(("calibrate", None))  # 💥 taky jen přidat do fronty
+        motor_queue.put(("calibrate", None))
         return jsonify({"status": "ok"})
 
     return app
+
