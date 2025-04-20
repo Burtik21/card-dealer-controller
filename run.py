@@ -19,65 +19,63 @@ def notify_node(button_steps):
 
 def listen_to_buttons():
     try:
-        # Nastavení jednotlivých pinů
+        # PINY
         BUTTON1 = Pins.BUTTON_1.pin
         BUTTON2 = Pins.BUTTON_2.pin
         BUTTON4 = Pins.BUTTON_4.pin
         BUTTON5 = Pins.BUTTON_5.pin
         BUTTON6 = Pins.BUTTON_6.pin
 
-        buttons = [BUTTON1, BUTTON2, BUTTON4, BUTTON5, BUTTON6]
-        for pin in buttons:
+        pins = [BUTTON1, BUTTON2, BUTTON4, BUTTON5, BUTTON6]
+        for pin in pins:
             if pin is not None:
                 GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        print("▶️ Jednoduchý režim naslouchání tlačítkům...")
+        print("▶️ Naslouchání tlačítkům (s cooldownem + stabilitou)...")
 
-        # Čas posledního stisknutí pro každý pin
-        last_pressed = {
-            BUTTON1: 0,
-            BUTTON2: 0,
-            BUTTON4: 0,
-            BUTTON5: 0,
-            BUTTON6: 0,
-        }
-
+        # Stav posledního zmáčknutí
+        last_pressed = {pin: 0 for pin in pins}
         cooldown = 3  # sekundy
 
         while True:
             now = time.time()
 
-            if BUTTON1 is not None and GPIO.input(BUTTON1) == GPIO.LOW:
-                if now - last_pressed[BUTTON1] > cooldown:
+            if BUTTON1 and GPIO.input(BUTTON1) == GPIO.LOW and now - last_pressed[BUTTON1] > cooldown:
+                time.sleep(0.02)  # anti-bounce check
+                if GPIO.input(BUTTON1) == GPIO.LOW:
                     print("🔘 Tlačítko 1 zmáčknuto")
                     notify_node(1)
                     last_pressed[BUTTON1] = now
 
-            if BUTTON2 is not None and GPIO.input(BUTTON2) == GPIO.LOW:
-                if now - last_pressed[BUTTON2] > cooldown:
+            if BUTTON2 and GPIO.input(BUTTON2) == GPIO.LOW and now - last_pressed[BUTTON2] > cooldown:
+                time.sleep(0.02)
+                if GPIO.input(BUTTON2) == GPIO.LOW:
                     print("🔘 Tlačítko 2 zmáčknuto")
                     notify_node(2)
                     last_pressed[BUTTON2] = now
 
-            if BUTTON4 is not None and GPIO.input(BUTTON4) == GPIO.LOW:
-                if now - last_pressed[BUTTON4] > cooldown:
+            if BUTTON4 and GPIO.input(BUTTON4) == GPIO.LOW and now - last_pressed[BUTTON4] > cooldown:
+                time.sleep(0.02)
+                if GPIO.input(BUTTON4) == GPIO.LOW:
                     print("🔘 Tlačítko 4 zmáčknuto")
                     notify_node(4)
                     last_pressed[BUTTON4] = now
 
-            if BUTTON5 is not None and GPIO.input(BUTTON5) == GPIO.LOW:
-                if now - last_pressed[BUTTON5] > cooldown:
+            if BUTTON5 and GPIO.input(BUTTON5) == GPIO.LOW and now - last_pressed[BUTTON5] > cooldown:
+                time.sleep(0.02)
+                if GPIO.input(BUTTON5) == GPIO.LOW:
                     print("🔘 Tlačítko 5 zmáčknuto")
                     notify_node(5)
                     last_pressed[BUTTON5] = now
 
-            if BUTTON6 is not None and GPIO.input(BUTTON6) == GPIO.LOW:
-                if now - last_pressed[BUTTON6] > cooldown:
+            if BUTTON6 and GPIO.input(BUTTON6) == GPIO.LOW and now - last_pressed[BUTTON6] > cooldown:
+                time.sleep(0.02)
+                if GPIO.input(BUTTON6) == GPIO.LOW:
                     print("🔘 Tlačítko 6 zmáčknuto")
                     notify_node(6)
                     last_pressed[BUTTON6] = now
 
-            time.sleep(0.05)  # Rychlej polling, ale se zpožděním
+            time.sleep(0.01)
     except KeyboardInterrupt:
         print("⛔ Ukončuji poslech tlačítek.")
     finally:
