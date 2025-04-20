@@ -56,6 +56,7 @@ class StepMotor:
         with self.lock:
             self._stop_request = False
 
+
             # ✅ Zapni motor
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
@@ -79,13 +80,19 @@ class StepMotor:
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
-
+            self.motor_direction = 1
             for step in range(max_steps):
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
                     self._actual_steps = 0  # nastavíme výchozí pozici
+                    self.motor_direction = 0
+                    for _ in range(30):
 
-                    # ↪ Potoč se ještě o 50 kroků – ale bez změny stavu
+                        GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                        time.sleep(delay)
+                        GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                        time.sleep(delay)
+
 
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
