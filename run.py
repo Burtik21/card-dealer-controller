@@ -2,8 +2,9 @@ import threading
 import RPi.GPIO as GPIO
 import time
 from flask import Flask
-from app import create_app  # Tvoje factory funkce
+from app import create_app
 from app.drivers.pins import Pins
+from app.drivers.calibration import Calibration
 
 # Seznam tlačítek
 BUTTONS = [
@@ -14,12 +15,20 @@ BUTTONS = [
     Pins.BUTTON_5,
     Pins.BUTTON_6,
 ]
-Pins.setup_pins()
+
 # Nastavení GPIO
 GPIO.setmode(GPIO.BCM)
+Pins.setup_pins()  # ale už NEBUDE obsahovat volání kalibrace
+
 for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+# ⬇️ Provést kalibraci PŘED Flaskem
+print("🧭 Spouštím kalibraci...")
+calibration = Calibration()
+calibration.calibration_rotate()
+print("✅ Kalibrace dokončena")
 
 # Funkce pro Flask server
 def start_flask():
