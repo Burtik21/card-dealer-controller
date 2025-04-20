@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 import queue
-import requests
 from flask import Flask, request, jsonify
 from app.drivers.pins import Pins
 from app.drivers.calibration import Calibration
@@ -21,7 +20,6 @@ BUTTONS = [
     Pins.BUTTON_5,
     Pins.BUTTON_6,
 ]
-
 for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -33,7 +31,7 @@ deal_card = DealCard()
 # === Fronta pro úkoly ===
 motor_queue = queue.Queue()
 
-# === Flask app ===
+# === Flask aplikace ===
 app = Flask(__name__)
 
 @app.route("/python/deal", methods=["POST"])
@@ -41,16 +39,16 @@ def api_deal():
     data = request.get_json()
     steps = data.get("steps")
     print(f"📤 Flask požadavek: vyhodit kartu ({steps} kroků)")
-    motor_queue.put(("deal", steps))
+    motor_queue.put(("deal", steps))  # 🔁 NEVOLAT PŘÍMO motor!
     return jsonify({"status": "ok", "message": f"Zapsáno do fronty: {steps} kroků"})
 
 @app.route("/python/calibrate", methods=["POST"])
 def api_calibrate():
     print("📤 Flask požadavek: kalibrace")
-    motor_queue.put(("calibrate", None))
+    motor_queue.put(("calibrate", None))  # 🔁 Pouze vložit do fronty
     return jsonify({"status": "ok", "message": "Kalibrace zapsaná do fronty"})
 
-# === Tlačítka → hážou úkol do fronty ===
+# === Poslech tlačítek ve vlákně ===
 def listen_to_buttons():
     try:
         print("▶️ Poslouchám tlačítka...")
@@ -65,7 +63,7 @@ def listen_to_buttons():
     finally:
         GPIO.cleanup()
 
-# === Hlavní vlákno: zpracovává frontu ===
+# === Hlavní vlákno: zpracovává motorické úkoly ===
 def main_motor_loop():
     print("🧠 Motor loop běží...")
     while True:
@@ -75,17 +73,20 @@ def main_motor_loop():
         elif task == "calibrate":
             calibration.calibration_rotate()
 
-# === Start všeho ===
+# === HLAVNÍ START ===
 if __name__ == "__main__":
-    print("🧭 Start kalibrace...")
+    print("🧭 Spouštím kalibraci při startu...")
     calibration.calibration_rotate()
     print("✅ Kalibrace hotová.")
 
-    # Spustíme Flask server ve vlákně
-    threading.Thread(target=lambda: app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False), daemon=True).start()
+    # Spustit Flask server ve vlákně
+    threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False),
+        daemon=True
+    ).start()
 
-    # Spustíme poslech tlačítek
+    # Spustit poslech tlačítek ve vlákně
     threading.Thread(target=listen_to_buttons, daemon=True).start()
 
-    # Hlavní smyčka zpracovává motory
+    # 🔁 Spustit hlavní smyčku (motor se točí vždy jen tady!)
     main_motor_loop()
