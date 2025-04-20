@@ -13,8 +13,7 @@ class DealCard():
         self.step_motor = StepMotor()
         self.dc_motor = DCMotor()
 
-
-    def deal(self,button=None,steps=None, number_of_cards=1):
+    def deal(self, button=None, steps=None, number_of_cards=1):
         with self.lock:
             if (button is not None) and (steps is not None):
                 raise ValueError("Můžeš zadat buď 'button' nebo 'steps', ale ne obojí zároveň!")
@@ -22,19 +21,19 @@ class DealCard():
                 raise ValueError("Musíš zadat buď 'button' nebo 'steps'!")
 
             final_steps = button.steps if button is not None else steps
-            #final_steps = steps if steps is not None else button.steps
 
-            self.step_motor.rotate(self.find_shortest_path(final_steps))
+            steps_to_move = self.find_shortest_path(final_steps)
 
-    def find_shortest_path(self,absolute_deal_steps):
-        """
-        nastavi spravny smer otaceni
+            print(f"🔁 Aktuální pozice: {self.step_motor.actual_steps}")
+            print(f"🎯 Cíl: {final_steps} → Otáčím o {steps_to_move} kroků, směr: {'➡️' if self.step_motor.motor_direction else '⬅️'}")
 
-        absolute_steps = kroky od nuloveho bodu (buttonu nebo proste misto kam chceme vyhodit kartu)
-        steps = kolik kroku ma udelat
-        """
-        cw=(self.step_motor.actual_steps-absolute_deal_steps)%535
-        anti_cw=(absolute_deal_steps-self.step_motor.actual_steps)%535
+            self.step_motor.rotate(steps_to_move)
+
+            print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
+
+    def find_shortest_path(self, absolute_deal_steps):
+        cw = (self.step_motor.actual_steps - absolute_deal_steps) % 535
+        anti_cw = (absolute_deal_steps - self.step_motor.actual_steps) % 535
 
         if anti_cw < cw:
             self.step_motor.motor_direction = 1
@@ -42,4 +41,5 @@ class DealCard():
         else:
             self.step_motor.motor_direction = 0
             return cw
+
 
