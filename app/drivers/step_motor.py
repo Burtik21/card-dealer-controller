@@ -53,24 +53,27 @@ class StepMotor:
         else:
             self._actual_steps += steps
 
+    import math
+
     def rotate(self, steps, delay=0.001):
         with self.lock:
             self._stop_request = False
-
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            ramp_steps = min(20, steps)  # prvních 20 kroků zpomalíme
-            start_delay = 0.005  # pomalý start (větší delay)
-            end_delay = delay  # cílová rychlost
+            ramp_steps = min(50, steps)  # Kolik kroků má být zrychlení
+            start_delay = 0.01  # Velmi pomalý začátek
+            end_delay = delay
+            k = 5  # Tvar exponenciály
 
             for i in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # Výpočet delay (lineární ramp-up)
+                # Smooth exponenciální delay
                 if i < ramp_steps:
-                    current_delay = start_delay - ((start_delay - end_delay) * (i / ramp_steps))
+                    t = i / ramp_steps
+                    current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
                 else:
                     current_delay = end_delay
 
@@ -79,7 +82,7 @@ class StepMotor:
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
                 time.sleep(current_delay)
 
-            time.sleep(0.5)
+            time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
     import math
@@ -97,16 +100,14 @@ class StepMotor:
                     self.motor_direction = 0
                     time.sleep(0.5)
 
-                    # Exponenciální ramp-up na 55 kroků
-                    total_steps = 55
-                    ramp_steps = total_steps
-                    start_delay = 0.008
+                    total_steps = 30
+                    start_delay = 0.01
                     end_delay = delay
+                    k = 5
 
                     for i in range(total_steps):
-                        # 🧠 Exponenciální přechod delaye (větší plynulost)
-                        t = i / ramp_steps
-                        current_delay = start_delay * math.exp(-3 * t) + end_delay * (1 - math.exp(-3 * t))
+                        t = i / total_steps
+                        current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
 
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                         time.sleep(current_delay)
