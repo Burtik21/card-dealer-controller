@@ -1,6 +1,8 @@
 import threading
 import RPi.GPIO as GPIO
 import time
+from flask import Flask
+from app import create_app  # Tvoje factory funkce
 from app.drivers.pins import Pins
 
 # Seznam tlačítek
@@ -13,24 +15,32 @@ BUTTONS = [
     Pins.BUTTON_6,
 ]
 
-# Nastavení pinů
+# Nastavení GPIO
 GPIO.setmode(GPIO.BCM)
 for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-def listen_to_buttons():
-    try:
-        print("▶️ Testovací mód spuštěn – zmáčkni tlačítko...")
-        while True:
-            for button in BUTTONS:
-                if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
-                    print(f"🔘 Tlačítko {button.index} zmáčknuto!")
-                    time.sleep(0.3)  # Debounce
-    except KeyboardInterrupt:
-        print("⛔ Ukončuji poslech tlačítek.")
-    finally:
-        GPIO.cleanup()
+# Funkce pro Flask server
+def start_flask():
+    print("🚀 Flask API startuje...")
+    app = create_app()
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
 
-if __name__ == "__main__":
-    listen_to_buttons()
+# Spuštění Flask serveru ve vlákně
+flask_thread = threading.Thread(target=start_flask)
+flask_thread.daemon = True
+flask_thread.start()
+
+# Tvoje funkční tlačítka – beze změny
+print("▶️ TEST režim: tlačítka + Flask paralelně")
+try:
+    while True:
+        for button in BUTTONS:
+            if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
+                print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                time.sleep(0.3)
+except KeyboardInterrupt:
+    print("⛔ Ukončuji program")
+finally:
+    GPIO.cleanup()
