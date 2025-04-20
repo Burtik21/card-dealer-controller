@@ -86,7 +86,7 @@ class StepMotor:
                     self._actual_steps = 0  # nastavíme výchozí pozici
 
                     # ↪ Potoč se ještě o 50 kroků – ale bez změny stavu
-                    for _ in range(400):
+                    for _ in range(80):
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                         time.sleep(delay)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
