@@ -55,23 +55,15 @@ class StepMotor:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            for i in range(steps):
+            for _ in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # Natvrdo zpomalený rozjezd
-                if i < 10:
-                    current_delay = delay * 3
-                elif i < 20:
-                    current_delay = delay * 1.5
-                else:
-                    current_delay = delay
-
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(current_delay)
+                time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(current_delay)
+                time.sleep(delay)
 
             time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
@@ -83,41 +75,25 @@ class StepMotor:
             self.motor_direction = 1
 
             for step in range(max_steps):
-                # Stejné natvrdo zpomalení
-                if step < 10:
-                    current_delay = delay * 3
-                elif step < 20:
-                    current_delay = delay * 1.5
-                else:
-                    current_delay = delay
-
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
                     self._actual_steps = 0
                     self.motor_direction = 0
                     time.sleep(0.3)
 
-                    total_steps = 30
-                    for i in range(total_steps):
-                        if i < 10:
-                            d = delay * 3
-                        elif i < 20:
-                            d = delay * 1.5
-                        else:
-                            d = delay
-
+                    for _ in range(30):
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                        time.sleep(d)
+                        time.sleep(delay)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                        time.sleep(d)
+                        time.sleep(delay)
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True
 
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(current_delay)
+                time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(current_delay)
+                time.sleep(delay)
 
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
             print("⚠️ Hall senzor nenalezen po max krocích.")
