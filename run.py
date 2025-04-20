@@ -11,7 +11,7 @@ def notify_node(button_steps):
     try:
         response = requests.post(
             "http://localhost:5000/api/deal",
-            json={"button_steps": button_steps}
+            json={"steps": button_steps}  # ← TADY!
         )
         print(f"📤 Odesláno do Node.js: tlačítko {button_steps} | Stav: {response.status_code}")
     except Exception as e:
