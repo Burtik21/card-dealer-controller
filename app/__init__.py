@@ -5,8 +5,6 @@ from app.drivers.pins import Pins
 
 def create_app():
     app = Flask(__name__)
-
-    Pins.setup_pins()
     calibration = Calibration()
     calibration.calibration_rotate()
     deal_card = DealCard()
