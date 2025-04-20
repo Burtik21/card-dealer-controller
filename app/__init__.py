@@ -2,14 +2,14 @@ from flask import Flask, request, jsonify
 from app.drivers.calibration import Calibration
 from app.drivers.deal_card import DealCard
 from app.drivers.pins import Pins
-import threading
 
 
 def create_app():
     app = Flask(__name__)
+
+    # Inicializace instancí
     deal_card = DealCard()
     calibration = Calibration()
-
 
     @app.route("/python/deal", methods=["POST"])
     def api_deal():
@@ -21,15 +21,18 @@ def create_app():
 
         print(f"📤 API požadavek: vyhodit kartu ({steps} kroků)")
 
-        # 🚀 Spustit v novém vlákně
-        threading.Thread(target=lambda: deal_card.deal(steps=steps)).start()
+        # ✅ PŘÍMO zavolat deal – bez vláken
+        deal_card.deal(steps=steps)
 
-        return jsonify({"status": "ok", "message": f"Dealing {steps} steps..."})
+        return jsonify({"status": "ok", "message": f"Dealt {steps} steps"})
 
     @app.route("/python/calibrate", methods=["POST"])
     def api_calibrate():
         print("📤 API požadavek: kalibrace")
-        threading.Thread(target=calibration.calibration_rotate).start()
-        return jsonify({"status": "ok", "message": "Kalibrace zahájena"})
+
+        # ✅ PŘÍMO zavolat kalibraci – bez vláken
+        calibration.calibration_rotate()
+
+        return jsonify({"status": "ok", "message": "Kalibrace dokončena"})
 
     return app
