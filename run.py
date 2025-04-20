@@ -14,7 +14,7 @@ BUTTONS = [
     Pins.BUTTON_5,
     Pins.BUTTON_6,
 ]
-
+Pins.setup_pins()
 # Nastavení GPIO
 GPIO.setmode(GPIO.BCM)
 for button in BUTTONS:
