@@ -79,51 +79,50 @@ class StepMotor:
             time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
+    def rotate(self, steps, delay=0.001):
+        with self.lock:
+            self._stop_request = False
+            GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
+
+            for _ in range(steps):
+                if self._stop_request:
+                    print("motor zastaven")
+                    break
+
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                time.sleep(delay)
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                time.sleep(delay)
+
+            time.sleep(0.3)
+            GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
+
     def rotate_until_sensor(self, max_steps=1000, delay=0.0015):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
             self.motor_direction = 1
 
-            # Plynulé zrychlení přes prvních N kroků
-            ramp_steps = min(100, max_steps)
-            start_delay = 0.01
-            end_delay = delay
-
             for step in range(max_steps):
-                # Rampa
-                if step < ramp_steps:
-                    t = step / ramp_steps
-                    current_delay = start_delay - (start_delay - end_delay) * (t ** 2)
-                else:
-                    current_delay = end_delay
-
-                # Kontrola Hall senzoru
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
                     self._actual_steps = 0
                     self.motor_direction = 0
                     time.sleep(0.3)
 
-                    # Po nalezení se plynule otoč o 30 zpět
-                    total_steps = 30
-                    for i in range(total_steps):
-                        t = i / total_steps
-                        back_delay = start_delay - (start_delay - end_delay) * (t ** 2)
-
+                    for _ in range(30):
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                        time.sleep(back_delay / 2)
+                        time.sleep(delay)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                        time.sleep(back_delay / 2)
+                        time.sleep(delay)
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True
 
-                # Krok
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(current_delay)
+                time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(current_delay)
+                time.sleep(delay)
 
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
             print("⚠️ Hall senzor nenalezen po max krocích.")
