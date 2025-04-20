@@ -81,7 +81,7 @@ class StepMotor:
                     self.motor_direction = 0
                     time.sleep(0.3)
 
-                    for _ in range(30):
+                    for _ in range(10):
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                         time.sleep(delay)
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
