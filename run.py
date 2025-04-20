@@ -32,13 +32,13 @@ calibration.calibration_rotate()
 print("✅ Kalibrace dokončena")
 
 # 📤 Posílání do Node.js backendu
-def notify_node(button_index):
+def notify_node(steps):
     try:
         response = requests.post(
             "http://127.0.0.1:5000/api/deal",  # změň na IP/port podle backendu
-            json={"button": button_index}
+            json={"steps": steps}
         )
-        print(f"📤 Odesláno do Node.js: tlačítko {button_index} | Status: {response.status_code}")
+        print(f"📤 Odesláno do Node.js: tlačítko {steps} | Status: {response.status_code}")
     except Exception as e:
         print(f"❌ Chyba při odesílání do Node.js: {e}")
 
@@ -49,8 +49,8 @@ def listen_to_buttons():
         while True:
             for button in BUTTONS:
                 if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
-                    print(f"🔘 Tlačítko {button.index} zmáčknuto!")
-                    notify_node(button.index)
+                    print(f"🔘 Tlačítko {button.steps} zmáčknuto!")
+                    notify_node(button.steps)
                     time.sleep(0.3)
     except KeyboardInterrupt:
         print("⛔ Ukončuji poslech tlačítek.")

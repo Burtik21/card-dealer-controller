@@ -69,6 +69,7 @@ class StepMotor:
                     print("motor zastaven")
             time.sleep(0.5)
             self.actual_steps = steps
+            GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
     def rotate_until_sensor(self, max_steps=1000, delay=0.001):
         with self.lock:
@@ -88,6 +89,7 @@ class StepMotor:
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
                 time.sleep(delay)
 
+            GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
             print("⚠️ Hall senzor nenalezen po max krocích.")
             return False
 
