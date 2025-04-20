@@ -1,5 +1,8 @@
+import threading
 import RPi.GPIO as GPIO
 import time
+from flask import Flask
+from app import create_app  # Tvoje factory funkce
 from app.drivers.pins import Pins
 
 # Seznam tlačítek
@@ -18,8 +21,19 @@ for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-print("▶️ TEST: bez Flasku, jen tlačítka")
+# Funkce pro Flask server
+def start_flask():
+    print("🚀 Flask API startuje...")
+    app = create_app()
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
 
+# Spuštění Flask serveru ve vlákně
+flask_thread = threading.Thread(target=start_flask)
+flask_thread.daemon = True
+flask_thread.start()
+
+# Tvoje funkční tlačítka – beze změny
+print("▶️ TEST režim: tlačítka + Flask paralelně")
 try:
     while True:
         for button in BUTTONS:
