@@ -97,7 +97,7 @@ class StepMotor:
                     self.motor_direction = 0
                     time.sleep(0.3)
 
-                    total_steps = 30
+                    total_steps = 10
                     for i in range(total_steps):
                         if i < 10:
                             d = delay * 3
