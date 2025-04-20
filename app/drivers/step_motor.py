@@ -100,14 +100,16 @@ class StepMotor:
                     self.motor_direction = 0
                     time.sleep(0.5)
 
-                    total_steps = 25
-                    start_delay = 0.01
+                    # Exponenciální ramp-up na 55 kroků
+                    total_steps = 30
+                    ramp_steps = total_steps
+                    start_delay = 0.008
                     end_delay = delay
-                    k = 5
 
                     for i in range(total_steps):
-                        t = i / total_steps
-                        current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
+                        # 🧠 Exponenciální přechod delaye (větší plynulost)
+                        t = i / ramp_steps
+                        current_delay = start_delay * math.exp(-3 * t) + end_delay * (1 - math.exp(-3 * t))
 
                         GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                         time.sleep(current_delay)
