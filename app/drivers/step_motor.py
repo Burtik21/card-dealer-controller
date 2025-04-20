@@ -100,7 +100,7 @@ class StepMotor:
                     self.motor_direction = 0
                     time.sleep(0.5)
 
-                    total_steps = 5
+                    total_steps = 25
                     start_delay = 0.01
                     end_delay = delay
                     k = 5
