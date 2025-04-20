@@ -15,14 +15,8 @@ class Calibration:
 
 
         print("▶️ Spouštím kalibraci – otáčím krok po kroku...")
-        nalezeno = self.step_motor.rotate_until_sensor(max_steps=self.calibration_steps)
+        self.step_motor.rotate_until_sensor()
 
-        if nalezeno:
-
-            self.step_motor.stop_motor()
-            print("✅ Kalibrace hotová, motor zastaven.")
-        else:
-            print("❌ Kalibrace selhala – Hall senzor nenalezen.")
 
 
 

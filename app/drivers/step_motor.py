@@ -54,7 +54,6 @@ class StepMotor:
 
     def rotate(self, steps, delay=0.001):
         with self.lock:
-            self._stop_request = False
 
             # ✅ Zapni motor
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
@@ -77,7 +76,7 @@ class StepMotor:
 
     def rotate_until_sensor(self, max_steps=1000, delay=0.001):
         with self.lock:
-            self._stop_request = False
+
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
             for step in range(max_steps):
                 # Kontrola Hall senzoru
@@ -99,10 +98,8 @@ class StepMotor:
             return False
 
     def stop_motor(self):
-        print("stop prijat")
-        self._stop_request = True
-        time.sleep(2)
-        self._stop_request = False
+        print("🛑 Soft stop – vypínám ENABLE")
+        GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
 
     def cleanup(self):
