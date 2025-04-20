@@ -1,6 +1,8 @@
 import threading
 import RPi.GPIO as GPIO
 import time
+from flask import Flask
+from app import create_app
 from app.drivers.pins import Pins
 
 # Seznam tlačítek
@@ -19,6 +21,7 @@ for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+# Poslech tlačítek
 def listen_to_buttons():
     try:
         print("▶️ Testovací mód spuštěn – zmáčkni tlačítko...")
@@ -32,5 +35,12 @@ def listen_to_buttons():
     finally:
         GPIO.cleanup()
 
+# Hlavní část
 if __name__ == "__main__":
-    listen_to_buttons()
+    # Spuštění tlačítek ve vlákně
+    threading.Thread(target=listen_to_buttons, daemon=True).start()
+
+    # Spuštění Flask serveru
+    print("🚀 Flask API běží...")
+    app = create_app()
+    app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False)
