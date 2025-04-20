@@ -19,7 +19,7 @@ class Pins:
     BUTTON_2 = Button(2, 140, 7)
     BUTTON_3 = Button(3, 70, 8)
     BUTTON_4 = Button(4, 470, 25)
-    BUTTON_5 = Button(5, 390, 24)
+    BUTTON_5 = Button(5, 350, 24)
     BUTTON_6 = Button(6, 250, 23)
 
     @staticmethod
