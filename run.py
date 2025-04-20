@@ -7,9 +7,18 @@ from app.drivers.pins import Pins
 from app.drivers.calibration import Calibration
 from app.drivers.deal_card import DealCard
 
+# === Nastavení GPIO ===
 GPIO.setmode(GPIO.BCM)
 Pins.setup_pins()
 
+# === Inicializace motor komponent ===
+calibration = Calibration()
+deal_card = DealCard()
+
+# === Fronta pro úkoly ===
+motor_queue = queue.Queue()
+
+# === Tlačítka ===
 BUTTONS = [
     Pins.BUTTON_1,
     Pins.BUTTON_2,
@@ -18,15 +27,11 @@ BUTTONS = [
     Pins.BUTTON_5,
     Pins.BUTTON_6,
 ]
-
 for button in BUTTONS:
     if button.pin is not None:
         GPIO.setup(button.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-calibration = Calibration()
-deal_card = DealCard()
-
-motor_queue = queue.Queue()
+# === Flask aplikace ===
 app = Flask(__name__)
 
 @app.route("/python/deal", methods=["POST"])
@@ -43,11 +48,12 @@ def api_calibrate():
     motor_queue.put(("calibrate", None))
     return jsonify({"status": "ok", "message": "Kalibrace zapsaná do fronty"})
 
+# === Poslech tlačítek ve vlákně ===
 def listen_to_buttons():
     print("▶️ Poslouchám tlačítka...")
     try:
         last_press_time = time.time()
-        cooldown = 0.5  # sec
+        cooldown = 0.5  # debounce mezi stisky
 
         while True:
             for button in BUTTONS:
@@ -61,8 +67,23 @@ def listen_to_buttons():
     except KeyboardInterrupt:
         GPIO.cleanup()
 
-def main_motor_loop():
-    print("🧠 Motor loop běží...")
+# === Hlavní spuštění ===
+if __name__ == "__main__":
+    print("🧭 Spouštím počáteční kalibraci...")
+    calibration.calibration_rotate()
+    print("✅ Kalibrace hotová.")
+
+    # Spuštění Flask serveru ve vlákně
+    threading.Thread(
+        target=lambda: app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False),
+        daemon=True
+    ).start()
+
+    # Spuštění poslechu tlačítek ve vlákně
+    threading.Thread(target=listen_to_buttons, daemon=True).start()
+
+    # 🔁 Hlavní zpracování motorových příkazů
+    print("🧠 Hlavní smyčka motoru běží...")
     while True:
         task, value = motor_queue.get()
         if task == "deal":
@@ -72,17 +93,3 @@ def main_motor_loop():
             print("➡️ Spouštím KALIBRACI")
             calibration.calibration_rotate()
         time.sleep(0.01)
-
-if __name__ == "__main__":
-    print("🧭 Spouštím počáteční kalibraci...")
-    calibration.calibration_rotate()
-    print("✅ Kalibrace hotová.")
-
-    threading.Thread(
-        target=lambda: app.run(host="0.0.0.0", port=5001, debug=True, use_reloader=False),
-        daemon=True
-    ).start()
-
-    threading.Thread(target=listen_to_buttons, daemon=True).start()
-
-    main_motor_loop()
