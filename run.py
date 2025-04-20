@@ -1,6 +1,7 @@
 import threading
 import RPi.GPIO as GPIO
 import time
+import requests
 from flask import Flask
 from app import create_app
 from app.drivers.pins import Pins
@@ -30,6 +31,17 @@ calibration = Calibration()
 calibration.calibration_rotate()
 print("✅ Kalibrace dokončena")
 
+# 📤 Posílání do Node.js backendu
+def notify_node(button_index):
+    try:
+        response = requests.post(
+            "http://localhost:3000/button-pressed",  # změň na IP/port podle backendu
+            json={"button": button_index}
+        )
+        print(f"📤 Odesláno do Node.js: tlačítko {button_index} | Status: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Chyba při odesílání do Node.js: {e}")
+
 # 👉 Poslech tlačítek ve vlákně
 def listen_to_buttons():
     try:
@@ -38,6 +50,7 @@ def listen_to_buttons():
             for button in BUTTONS:
                 if button.pin is not None and GPIO.input(button.pin) == GPIO.LOW:
                     print(f"🔘 Tlačítko {button.index} zmáčknuto!")
+                    notify_node(button.index)
                     time.sleep(0.3)
     except KeyboardInterrupt:
         print("⛔ Ukončuji poslech tlačítek.")
