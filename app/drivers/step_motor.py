@@ -19,6 +19,7 @@ class StepMotor:
 
         if not hasattr(self, 'initialized'):
             self.lock = threading.Lock()
+            self._stop_request = False
             self._actual_steps = actual_steps
             self._steps_per_rev = steps_per_rev
             self._motor_direction = motor_direction
@@ -53,16 +54,20 @@ class StepMotor:
 
     def rotate(self, steps, delay=0.001):
         with self.lock:
+            self._stop_request = False
 
             # ✅ Zapni motor
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
             for _ in range(steps):
-
-                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(delay)
-                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(delay)
+                if not self._stop_request:
+                    GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                    time.sleep(delay)
+                    GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                    time.sleep(delay)
+                else:
+                    print("motor zastaven")
+                    break
 
             time.sleep(0.5)
             self.actual_steps = steps
@@ -72,14 +77,14 @@ class StepMotor:
 
     def rotate_until_sensor(self, max_steps=1000, delay=0.001):
         with self.lock:
-
+            self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
             for step in range(max_steps):
                 # Kontrola Hall senzoru
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
                     self._actual_steps = 0
-                    #self.rotate(50)
+
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True  # Nalezeno
 
