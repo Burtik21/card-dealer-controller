@@ -59,26 +59,25 @@ class StepMotor:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            ramp_steps = min(150, steps)  # Počet kroků pro zrychlení
-            start_delay = 0.012  # Pomalejší začátek
-            end_delay = delay  # Cílová rychlost
+            ramp_steps = min(100, steps)  # ← kolik kroků bude "zrychlování"
+            start_delay = 0.01  # ← první krok bude s tímto delayem
+            end_delay = delay  # ← cílová rychlost
+            delay_step = (start_delay - end_delay) / ramp_steps  # krokový rozdíl
 
             for i in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # 🌀 Kvadratická rampa (jemné zrychlení)
                 if i < ramp_steps:
-                    t = i / ramp_steps
-                    current_delay = start_delay - (start_delay - end_delay) * (t ** 2)
+                    current_delay = start_delay - delay_step * i
                 else:
                     current_delay = end_delay
 
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(current_delay / 2)
+                time.sleep(current_delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(current_delay / 2)
+                time.sleep(current_delay)
 
             time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
