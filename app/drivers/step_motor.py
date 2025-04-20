@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 from .pins import Pins
-import math
 from .dc_motor import DCMotor
 
 
@@ -53,27 +52,24 @@ class StepMotor:
         else:
             self._actual_steps += steps
 
-    import math
-
     def rotate(self, steps, delay=0.001):
         with self.lock:
             self._stop_request = False
+
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            ramp_steps = min(50, steps)  # Kolik kroků má být zrychlení
-            start_delay = 0.01  # Velmi pomalý začátek
-            end_delay = delay
-            k = 5  # Tvar exponenciály
+            ramp_steps = min(20, steps)  # prvních 20 kroků zpomalíme
+            start_delay = 0.005  # pomalý start (větší delay)
+            end_delay = delay  # cílová rychlost
 
             for i in range(steps):
                 if self._stop_request:
                     print("motor zastaven")
                     break
 
-                # Smooth exponenciální delay
+                # Výpočet delay (lineární ramp-up)
                 if i < ramp_steps:
-                    t = i / ramp_steps
-                    current_delay = start_delay * math.exp(-k * t) + end_delay * (1 - math.exp(-k * t))
+                    current_delay = start_delay - ((start_delay - end_delay) * (i / ramp_steps))
                 else:
                     current_delay = end_delay
 
@@ -82,43 +78,23 @@ class StepMotor:
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
                 time.sleep(current_delay)
 
-            time.sleep(0.3)
+            time.sleep(0.5)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
-
-    import math
 
     def rotate_until_sensor(self, max_steps=1000, delay=0.001):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
             self.motor_direction = 1
-
             for step in range(max_steps):
                 if GPIO.input(Pins.HALL_SENSOR) == GPIO.LOW:
                     print("✅ Hall senzor detekován.")
-                    self._actual_steps = 0
-                    self.motor_direction = 0
-                    time.sleep(0.5)
-
-                    # Exponenciální ramp-up na 55 kroků
-                    total_steps = 30
-                    ramp_steps = total_steps
-                    start_delay = 0.008
-                    end_delay = delay
-
-                    for i in range(total_steps):
-                        # 🧠 Exponenciální přechod delaye (větší plynulost)
-                        t = i / ramp_steps
-                        current_delay = start_delay * math.exp(-3 * t) + end_delay * (1 - math.exp(-3 * t))
-
-                        GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                        time.sleep(current_delay)
-                        GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                        time.sleep(current_delay)
+                    self._actual_steps = 0  # nastavíme výchozí pozici
 
                     GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
                     return True
 
+                # Normální krok
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                 time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)

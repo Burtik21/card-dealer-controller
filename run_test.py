@@ -6,7 +6,7 @@ from app.drivers.dc_motor import DCMotor
 from app.drivers.deal_card import DealCard
 def run():
     # Inicializace všech komponent
-    Pins.setup_pins()
+    #Pins.setup_pins()
     calibration = Calibration()
     step_motor = StepMotor()
     dc_motor = DCMotor()
