@@ -13,6 +13,9 @@ class Pins:
     MOTOR_DC_IN2 = 5
     MOTOR_DC_PWM = 13
 
+    M0= 11
+    M1= 9
+
     HALL_SENSOR = 14 # Například pro senzor
 
     BUTTON_1 = Button(1, 217, 1)
@@ -35,6 +38,12 @@ class Pins:
         GPIO.setup(Pins.MOTOR_DC_IN2, GPIO.OUT)
         GPIO.setup(Pins.MOTOR_DC_PWM, GPIO.OUT)
         GPIO.setup(Pins.HALL_SENSOR, GPIO.IN)
+
+        GPIO.setup(Pins.M0, GPIO.OUT)
+        GPIO.setup(Pins.M1, GPIO.OUT)
+        GPIO.output(Pins.M1, GPIO.HIGH)
+        GPIO.output(Pins.M0, GPIO.HIGH)
+
 
 
         print("GPIO piny byly úspěšně inicializovány!")
