@@ -50,7 +50,7 @@ class StepMotor:
     def actual_steps(self, steps):
         self._actual_steps = steps % 535
 
-    def rotate(self, steps, delay=0.001):
+    def rotate(self, steps, delay=0.00125):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
