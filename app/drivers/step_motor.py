@@ -50,22 +50,17 @@ class StepMotor:
     def actual_steps(self, steps):
         self._actual_steps = steps % 4280
 
-    def rotate(self, steps, delay=0.0003):
+    def rotate(self, steps, delay=0.00025):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
             for i in range(steps):
-                # Pro prvních 100 kroků vyšší delay
-                if i < 100:
-                    current_delay = 0.0004  # pomalé
-                else:
-                    current_delay = delay  # normální
 
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(current_delay)
+                time.sleep(delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(current_delay)
+                time.sleep(delay)
 
             time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
