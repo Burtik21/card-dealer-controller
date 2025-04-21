@@ -58,7 +58,7 @@ class StepMotor:
             for i in range(steps):
                 # Pro prvních 100 kroků vyšší delay
                 if i < 100:
-                    current_delay = 0.004  # pomalé
+                    current_delay = 0.0004  # pomalé
                 else:
                     current_delay = delay  # normální
 
