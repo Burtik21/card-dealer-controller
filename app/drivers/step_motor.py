@@ -55,14 +55,38 @@ class StepMotor:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            for _ in range(steps):
+            ramp_steps = min(200, steps // 2)  # ramp-up i ramp-down
+            flat_steps = steps - ramp_steps * 2
 
+            start_delay = 0.001  # pomalý začátek
+            end_delay = delay
+
+            # Ramp UP
+            for i in range(ramp_steps):
+                t = i / ramp_steps
+                current_delay = start_delay - (start_delay - end_delay) * (t ** 2)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
-                time.sleep(delay)
+                time.sleep(current_delay)
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
-                time.sleep(delay)
+                time.sleep(current_delay)
 
-            time.sleep(0.3)
+            # Stálá rychlost
+            for _ in range(flat_steps):
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                time.sleep(end_delay)
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                time.sleep(end_delay)
+
+            # Ramp DOWN (zrcadlo)
+            for i in reversed(range(ramp_steps)):
+                t = i / ramp_steps
+                current_delay = start_delay - (start_delay - end_delay) * (t ** 2)
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
+                time.sleep(current_delay)
+                GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.LOW)
+                time.sleep(current_delay)
+
+            time.sleep(0.2)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
     def rotate_until_sensor(self, max_steps=4280, delay=0.00014):
