@@ -64,7 +64,7 @@ class StepMotor:
             time.sleep(0.3)
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.HIGH)
 
-    def rotate_until_sensor(self, max_steps=4280, delay=0.00014):
+    def rotate_until_sensor(self, max_steps=4280, delay=0.0003):
         with self.lock:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
