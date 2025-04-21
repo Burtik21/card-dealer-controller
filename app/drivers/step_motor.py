@@ -55,7 +55,7 @@ class StepMotor:
             self._stop_request = False
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
-            for i in range(steps+100):
+            for i in range(steps+150):
 
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                 time.sleep(delay)
