@@ -34,8 +34,8 @@ class DealCard():
             print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
 
     def find_shortest_path(self, absolute_deal_steps):
-        cw = (self.step_motor.actual_steps - absolute_deal_steps) % 535
-        anti_cw = (absolute_deal_steps - self.step_motor.actual_steps) % 535
+        cw = (self.step_motor.actual_steps - absolute_deal_steps) % 4280
+        anti_cw = (absolute_deal_steps - self.step_motor.actual_steps) % 4280
 
         if anti_cw < cw:
             self.step_motor.motor_direction = 1
