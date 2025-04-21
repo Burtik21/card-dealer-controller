@@ -49,6 +49,7 @@ class DCMotor:
     @staticmethod
     def deal_card(forward_time=0.07,backward_time=0.035,wait_between=0.01 ):
         """ Ovládání motoru pro rozdání karty """
+        time.sleep(0.5)
         DCMotor.init()
         DCMotor.forward()
         time.sleep(forward_time)
