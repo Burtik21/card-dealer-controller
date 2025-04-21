@@ -14,12 +14,13 @@ def run():
 
 
     # Mapa (slovník) pro propojení akce s metodou
+    # Mapa (slovník) pro propojení akce s metodou
     actions = {
         1: calibration.calibration_rotate,
         2: lambda: rotate_motor(step_motor),
         3: step_motor.stop_motor,
         4: dc_motor.deal_card,
-        5: lambda: deal_card.deal(steps=300),
+        5: lambda: deal_card_interactive(deal_card),  # 👈 nová funkce
         6: display_help,
         7: exit_app
     }
@@ -70,6 +71,13 @@ def display_help():
     6. Zobrazit nápovědu
     7. Ukončit
     """)
+def deal_card_interactive(deal_card):
+    try:
+        steps = int(input("Zadej počet kroků pro vyhození karty: ").strip())
+        deal_card.deal(steps=steps)
+    except ValueError:
+        print("❌ Neplatný počet kroků!")
+
 
 def exit_app():
     print("Ukončuji aplikaci.")
