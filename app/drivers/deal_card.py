@@ -21,15 +21,19 @@ class DealCard():
 
             final_steps = button.steps if button is not None else steps
 
-            steps_to_move = self.find_shortest_path(final_steps)
+            # Pokud jsme už na místě, neotáčíme
+            if self.step_motor.actual_steps == final_steps:
+                print("⚠️ Už jsme na požadované pozici – netočím.")
+            else:
+                steps_to_move = self.find_shortest_path(final_steps)
 
-            print(f"🔁 Aktuální pozice: {self.step_motor.actual_steps}")
-            print(f"🎯 Cíl: {final_steps} → Otáčím o {steps_to_move} kroků, směr: {'➡️' if self.step_motor.motor_direction else '⬅️'}")
+                print(f"🔁 Aktuální pozice: {self.step_motor.actual_steps}")
+                print(
+                    f"🎯 Cíl: {final_steps} → Otáčím o {steps_to_move} kroků + 150 extra, směr: {'➡️' if self.step_motor.motor_direction else '⬅️'}")
 
-            self.step_motor.rotate(steps_to_move)
+                self.step_motor.rotate(steps_to_move + 150)
 
-            # ✅ Opravena aktualizace pozice
-            self.step_motor.actual_steps = final_steps
+            self.step_motor.actual_steps = final_steps  # nastavíme pozici
             self.dc_motor.deal_card()
             print(f"✅ Nová pozice: {self.step_motor.actual_steps}")
 
