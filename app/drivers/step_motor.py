@@ -56,9 +56,6 @@ class StepMotor:
             GPIO.output(Pins.MOTOR_STEP_ENABLE, GPIO.LOW)
 
             for _ in range(steps):
-                if self._stop_request:
-                    print("motor zastaven")
-                    break
 
                 GPIO.output(Pins.MOTOR_STEP_STEP, GPIO.HIGH)
                 time.sleep(delay)
