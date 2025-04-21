@@ -18,12 +18,12 @@ class Pins:
 
     HALL_SENSOR = 14 # Například pro senzor
 
-    BUTTON_1 = Button(1, 217, 1)
-    BUTTON_2 = Button(2, 144, 7)
-    BUTTON_3 = Button(3, 70, 8)
-    BUTTON_4 = Button(4, 410, 25)
-    BUTTON_5 = Button(5, 320, 24)
-    BUTTON_6 = Button(6, 230, 23)
+    BUTTON_1 = Button(1, 1605, 1)
+    BUTTON_2 = Button(2, 1070, 7)
+    BUTTON_3 = Button(3, 535, 8)
+    BUTTON_4 = Button(4, 3745, 25)
+    BUTTON_5 = Button(5, 3210, 24)
+    BUTTON_6 = Button(6, 2675, 23)
 
     @staticmethod
     def setup_pins():
